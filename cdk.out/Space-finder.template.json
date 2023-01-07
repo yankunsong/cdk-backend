@@ -1,0 +1,602 @@
+{
+ "Resources": {
+  "spaceApi1D6A1619": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "Name": "spaceApi"
+   },
+   "Metadata": {
+    "aws:cdk:path": "Space-finder/spaceApi/Resource"
+   }
+  },
+  "spaceApiCloudWatchRole2D2AF0B0": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "apigateway.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+       ]
+      ]
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "Space-finder/spaceApi/CloudWatchRole/Resource"
+   }
+  },
+  "spaceApiAccountA251AFA5": {
+   "Type": "AWS::ApiGateway::Account",
+   "Properties": {
+    "CloudWatchRoleArn": {
+     "Fn::GetAtt": [
+      "spaceApiCloudWatchRole2D2AF0B0",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "spaceApi1D6A1619"
+   ],
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "Space-finder/spaceApi/Account"
+   }
+  },
+  "spaceApiDeployment14AE486E909fa786d8e3605ca291576aae28309c": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "RestApiId": {
+     "Ref": "spaceApi1D6A1619"
+    },
+    "Description": "Automatically created by the RestApi construct"
+   },
+   "DependsOn": [
+    "spaceApihellosGETE1E1FBA8",
+    "spaceApihellosB6CB440C"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "Space-finder/spaceApi/Deployment/Resource"
+   }
+  },
+  "spaceApiDeploymentStageprod93CC2149": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "RestApiId": {
+     "Ref": "spaceApi1D6A1619"
+    },
+    "DeploymentId": {
+     "Ref": "spaceApiDeployment14AE486E909fa786d8e3605ca291576aae28309c"
+    },
+    "StageName": "prod"
+   },
+   "DependsOn": [
+    "spaceApiAccountA251AFA5"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "Space-finder/spaceApi/DeploymentStage.prod/Resource"
+   }
+  },
+  "spaceApihellosB6CB440C": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "spaceApi1D6A1619",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "hellos",
+    "RestApiId": {
+     "Ref": "spaceApi1D6A1619"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Space-finder/spaceApi/Default/hellos/Resource"
+   }
+  },
+  "spaceApihellosGETApiPermissionSpacefinderspaceApi7E756CF7GEThellos679BA260": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "helloLambda79DCE371",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "spaceApi1D6A1619"
+       },
+       "/",
+       {
+        "Ref": "spaceApiDeploymentStageprod93CC2149"
+       },
+       "/GET/hellos"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Space-finder/spaceApi/Default/hellos/GET/ApiPermission.SpacefinderspaceApi7E756CF7.GET..hellos"
+   }
+  },
+  "spaceApihellosGETApiPermissionTestSpacefinderspaceApi7E756CF7GEThellosCA011849": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "helloLambda79DCE371",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "spaceApi1D6A1619"
+       },
+       "/test-invoke-stage/GET/hellos"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Space-finder/spaceApi/Default/hellos/GET/ApiPermission.Test.SpacefinderspaceApi7E756CF7.GET..hellos"
+   }
+  },
+  "spaceApihellosGETE1E1FBA8": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "HttpMethod": "GET",
+    "ResourceId": {
+     "Ref": "spaceApihellosB6CB440C"
+    },
+    "RestApiId": {
+     "Ref": "spaceApi1D6A1619"
+    },
+    "AuthorizationType": "NONE",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "helloLambda79DCE371",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "Space-finder/spaceApi/Default/hellos/GET/Resource"
+   }
+  },
+  "spaceTableF715D8AC": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "KeySchema": [
+     {
+      "AttributeName": "spaceId",
+      "KeyType": "HASH"
+     }
+    ],
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "spaceId",
+      "AttributeType": "S"
+     }
+    ],
+    "ProvisionedThroughput": {
+     "ReadCapacityUnits": 5,
+     "WriteCapacityUnits": 5
+    },
+    "TableName": "spaceTable"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "Space-finder/spaceTable/Resource"
+   }
+  },
+  "helloLambdaServiceRoleBB046714": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "Space-finder/helloLambda/ServiceRole/Resource"
+   }
+  },
+  "helloLambda79DCE371": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "ae5f6930c8e7d29f0f8f6e8dce0b9cea33faf4eb95fc5d689c7ef6c7d9cc60d4.zip"
+    },
+    "Role": {
+     "Fn::GetAtt": [
+      "helloLambdaServiceRoleBB046714",
+      "Arn"
+     ]
+    },
+    "Handler": "hello.main",
+    "Runtime": "nodejs14.x"
+   },
+   "DependsOn": [
+    "helloLambdaServiceRoleBB046714"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "Space-finder/helloLambda/Resource",
+    "aws:asset:path": "asset.ae5f6930c8e7d29f0f8f6e8dce0b9cea33faf4eb95fc5d689c7ef6c7d9cc60d4",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1WQTU/DMAyGfwv3NDA+JDh2Q9wQaHCf3MR0XpukqhOmqup/x1lAbCc/fuWP177VD0/65gqOXBnbVT01ev6IYDol0m6GgVqIeIRJz1vkWA+kNl/+DGtjQvJRPePQh8mhoKhnmUxrMWsFpDWk0eAa+D/5nVn4FeM+2CwVWhSBk/WhL3USF9WDayzoWYR3HB0xU/DqJXkTM4j8x4uykwcXrFz2CU0ZcoJF8d0OmDGyrnOQXK+T6TBmd8uFvbcUhxTVqS5fQr69cC28Cd5SWemDRX3g6+/VvV49yoMPTFSN8ihyqLcl/gCWI0enfAEAAA=="
+   },
+   "Metadata": {
+    "aws:cdk:path": "Space-finder/CDKMetadata/Default"
+   },
+   "Condition": "CDKMetadataAvailable"
+  }
+ },
+ "Outputs": {
+  "spaceApiEndpointA8FEBEED": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "spaceApi1D6A1619"
+      },
+      ".execute-api.",
+      {
+       "Ref": "AWS::Region"
+      },
+      ".",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "spaceApiDeploymentStageprod93CC2149"
+      },
+      "/"
+     ]
+    ]
+   }
+  }
+ },
+ "Conditions": {
+  "CDKMetadataAvailable": {
+   "Fn::Or": [
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "af-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-northwest-1"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "sa-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-2"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-2"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

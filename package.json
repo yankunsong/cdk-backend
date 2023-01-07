@@ -1,0 +1,28 @@
+{
+  "name": "cdk-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yankunsong/cdk-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yankunsong/cdk-backend/issues"
+  },
+  "homepage": "https://github.com/yankunsong/cdk-backend#readme",
+  "devDependencies": {
+    "@types/node": "^18.11.18",
+    "aws-cdk": "^2.59.0",
+    "aws-cdk-lib": "^2.59.0",
+    "constructs": "^10.1.211",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.4"
+  }
+}
