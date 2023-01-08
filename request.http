@@ -2,3 +2,11 @@
 
 GET {{endpoint}}/hellos/
 ###
+
+POST {{endpoint}}/spaces/
+Content-Type: application/json
+
+{
+  "location": "London", "name":"best location"
+}
+###
